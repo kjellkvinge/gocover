@@ -8,11 +8,11 @@ import (
 	"log"
 	"math"
 	"os"
-	"os/exec"
 	"path"
 	"strings"
 	"text/tabwriter"
 
+	gu "github.com/farzadmf/goutils"
 	"github.com/pterm/pterm"
 	"golang.org/x/tools/cover"
 )
@@ -46,15 +46,11 @@ func main() {
 		os.Exit(0)
 	}
 	if fRunTests {
-		cmd := exec.Command(
-			"go",
-			"test",
-			"-covermode=count",
-			fmt.Sprintf("-coverprofile=%s", outFile.Name()),
-			"./...",
-		)
-		err := cmd.Run()
+		output, err := gu.RunCommand(fmt.Sprintf(
+			"go test -covermode=count -coverprofile=%s ./...", outFile.Name(),
+		))
 		if err != nil {
+			log.Println(output)
 			log.Fatal(err)
 		}
 	}
