@@ -36,20 +36,36 @@ func main() {
 	// i.e gocover main.go
 	setFlagsFromArgs()
 
+	outFile, err := ioutil.TempFile("", "coverage")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	if fLegend {
 		legend(os.Stdout)
 		os.Exit(0)
 	}
 	if fRunTests {
-		cmd := exec.Command("go", "test", "-covermode=count", "-coverprofile=coverage.out")
+		cmd := exec.Command(
+			"go",
+			"test",
+			"-covermode=count",
+			fmt.Sprintf("-coverprofile=%s", outFile.Name()),
+			"./...",
+		)
 		err := cmd.Run()
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
 
-	profiles, err := cover.ParseProfiles("coverage.out")
+	profiles, err := cover.ParseProfiles(outFile.Name())
 	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Clean up after ourselves :)
+	if err := os.Remove(outFile.Name()); err != nil {
 		log.Fatal(err)
 	}
 
