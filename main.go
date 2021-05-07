@@ -21,9 +21,11 @@ var fFunc string
 var fRunTests bool
 var fFileName string
 var fLegend bool
+var fDebug bool = false
 
 var to = pterm.NewRGB(42, 119, 11) // This RGB value is used as the gradients start point.
 var from = pterm.NewRGB(171, 200, 170)
+var untracked = pterm.NewRGB(100, 100, 100)
 
 func main() {
 	flag.StringVar(&fFunc, "func", "", "Show only selected function")
@@ -286,10 +288,11 @@ func percentCovered(p *cover.Profile) float64 {
 }
 
 func printUntracked(s string) string {
-	return pterm.FgLightWhite.Sprint(s)
+	return untracked.Sprint(s)
 }
 
 func printCoverage(pp []paintpoint, src []byte, start, stop int) {
+	legend(os.Stdout)
 	pi := 0 // paintpoint index
 	var w bytes.Buffer
 	for i := start; i < stop; i++ {
