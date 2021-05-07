@@ -285,6 +285,10 @@ func percentCovered(p *cover.Profile) float64 {
 	return float64(covered) / float64(total) * 100
 }
 
+func printUntracked(s string) string {
+	return pterm.FgLightWhite.Sprint(s)
+}
+
 func printCoverage(pp []paintpoint, src []byte, start, stop int) {
 	pi := 0 // paintpoint index
 	var w bytes.Buffer
@@ -293,7 +297,7 @@ func printCoverage(pp []paintpoint, src []byte, start, stop int) {
 
 			fmt.Fprint(&w, fadeprint(string(src[i]), float64(pp[pi].cov)))
 		} else {
-			fmt.Fprint(&w, pterm.FgLightWhite.Sprint(string(src[i])))
+			fmt.Fprint(&w, printUntracked(string(src[i])))
 		}
 		if pi < len(pp) && i >= pp[pi].stop {
 			pi++
