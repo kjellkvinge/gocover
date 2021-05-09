@@ -59,7 +59,7 @@ func main() {
 
 	if fRunTests {
 		output, err := gu.RunCommand(fmt.Sprintf(
-			"go test -covermode=count -coverprofile=%s ./...", outFile.Name(),
+			"go test -covermode=count -coverprofile=%s ./...", fcoverFilename,
 		))
 		if err != nil {
 			log.Println(output)
