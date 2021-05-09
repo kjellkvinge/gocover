@@ -65,8 +65,10 @@ func main() {
 			fmt.Sprintf("-coverprofile=%s", fcoverFilename),
 			"./...",
 		)
-		err := cmd.Run()
+
+		output, err := cmd.CombinedOutput()
 		if err != nil {
+			log.Println(string(output))
 			log.Fatal(err)
 		}
 	}
