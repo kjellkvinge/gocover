@@ -21,6 +21,7 @@ var fFunc string
 var fRunTests bool
 var fFileName string
 var fLegend bool
+var fcoverFilename string
 
 var to = pterm.NewRGB(42, 119, 11) // This RGB value is used as the gradients start point.
 var from = pterm.NewRGB(171, 200, 170)
@@ -28,6 +29,7 @@ var from = pterm.NewRGB(171, 200, 170)
 func main() {
 	flag.StringVar(&fFunc, "func", "", "Show only selected function")
 	flag.StringVar(&fFileName, "file", "", "show anotatded sourcecode for selected file")
+	flag.StringVar(&fcoverFilename, "coverFilename", "coverage.out", "Cover profile filename location")
 	flag.BoolVar(&fLegend, "legend", false, "Print sample colors")
 	flag.BoolVar(&fRunTests, "runtests", true, "Run tests and generate coverage profile")
 	flag.Parse()
@@ -36,15 +38,25 @@ func main() {
 	// i.e gocover main.go
 	setFlagsFromArgs()
 
-	outFile, err := ioutil.TempFile("", "coverage")
-	if err != nil {
-		log.Fatal(err)
+	if fcoverFilename == "" {
+		outFile, err := ioutil.TempFile("", "coverage")
+		if err != nil {
+			log.Fatal(err)
+		}
+		fcoverFilename = outFile.Name()
+		defer func() {
+			err := os.Remove(fcoverFilename)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}()
 	}
 
 	if fLegend {
 		legend(os.Stdout)
 		os.Exit(0)
 	}
+
 	if fRunTests {
 		output, err := gu.RunCommand(fmt.Sprintf(
 			"go test -covermode=count -coverprofile=%s ./...", outFile.Name(),
@@ -55,13 +67,8 @@ func main() {
 		}
 	}
 
-	profiles, err := cover.ParseProfiles(outFile.Name())
+	profiles, err := cover.ParseProfiles(fcoverFilename)
 	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Clean up after ourselves :)
-	if err := os.Remove(outFile.Name()); err != nil {
 		log.Fatal(err)
 	}
 
