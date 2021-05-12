@@ -29,7 +29,7 @@ var from = pterm.NewRGB(171, 200, 170)
 func main() {
 	flag.StringVar(&fFunc, "func", "", "Show only selected function")
 	flag.StringVar(&fFileName, "file", "", "show anotatded sourcecode for selected file")
-	flag.StringVar(&fcoverFilename, "coverFilename", "coverage.out", "Cover profile filename location")
+	flag.StringVar(&fcoverFilename, "coverFilename", "", "Cover profile filename location")
 	flag.BoolVar(&fLegend, "legend", false, "Print sample colors")
 	flag.BoolVar(&fRunTests, "runtests", true, "Run tests and generate coverage profile")
 	flag.Parse()
