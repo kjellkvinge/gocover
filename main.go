@@ -260,7 +260,12 @@ func fadeprint(s string, cov float64) string {
 
 }
 func printFileAndCoverage(filename string, cov float64) {
-	pterm.NewStyle(pterm.Bold).Printf("#%-20s ", path.Base(filename))
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fn := strings.Replace(filename, fmt.Sprintf("%s/", wd), "", 1)
+	pterm.NewStyle(pterm.Bold).Printf("# %-20s ", fn)
 	fmt.Print(fadeprint(fmt.Sprintf("%.1f%%\n", cov), cov))
 	fmt.Println("---------------------------")
 }
